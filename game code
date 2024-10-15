@@ -1,0 +1,203 @@
+float ch_type;
+float ch_x, ch_y, ch_d;
+float st_x = 100, st_y = 400;
+
+int frame, time, game_timer;
+int start_frame;
+float clear_time = 0;
+
+int bgcolor;
+float bgstate;
+
+float colide_count;
+
+float mission_state;
+
+void setup(){
+  size(1000,500);
+  frameRate(60);
+  
+  colide_count = 0;  mission_state = 0;
+
+  start_frame = frame;
+
+  ob1_d = 0.4;   ob2_d = 0.7;   ob3_d = 1;
+  ob1_c = 2;     ob2_c = 2;     ob3_c = 2;
+  ob1_x = 100;   ob2_x = 400;   ob3_x = 700;
+  ob1_y = 250;   ob2_y = 490;   ob3_y = 10;
+  ob1_vx = 4;    ob2_vx = 5;    ob3_vx = 3;
+  ob1_vy = 3;    ob2_vy = 1;    ob3_vy = 2;
+
+  ch_type = 1;
+    ch_x = st_x; ch_y = st_y; 
+  frame = 0;
+  bgcolor = #649bff;
+  bgstate = 1;
+}
+
+void draw(){
+  
+  background(bgcolor);
+  if(bgstate == 1) bgcolor = #649bff; 
+  if(bgstate == 2) bgcolor = #8AFF64; 
+  if(bgstate == 3) bgcolor = #FF646C; 
+
+  fill(255, 0, 0);
+  rect(930, 0, 70, 70);
+  textSize(25);
+  fill(255);
+  text("GOAL",936,42);
+  
+  Obstacles_Moving();
+  Move_Character(ch_type);
+ 
+  frame++;
+  time = frame/60; 
+  game_timer = 20 - time; 
+  fill(255);
+  rect(20, 17, 198, 48);
+  textSize(30);
+  fill(0);
+  text(game_timer + " seconds left", 25,50); 
+
+  if(game_timer == 0) mission_state = 1; 
+  
+  if(mission_state == 1){
+  Gameover();
+  noLoop();
+  }
+  
+  if(mission_state == 2){
+  GameSucceed();
+  noLoop();
+  }
+  
+}
+
+void mouseClicked(){
+  if(bgstate == 1) bgstate = 2;
+  else if(bgstate == 2) bgstate = 3;
+  else bgstate = 1;
+}
+
+void keyPressed(){
+  if(key == 'a') ch_x -= 30;
+  else if(key == 'd') ch_x += 30;
+  else if(key == 'w') ch_y -= 30;
+  else if(key == 's') ch_y += 30;
+  
+  else if(key == 'i') ch_type = 1;
+  else if(key == 'o') ch_type = 2;
+  else if(key == 'p') ch_type = 3;
+
+}
+
+void Move_Character(float character_type){
+  if (mission_state == 0) {
+    if (character_type == 1)  drawzzanggu(ch_x, ch_y, 0.3, 1); 
+    else if (character_type == 2)  drawPig(ch_x, ch_y, 0.6, 1);
+    else if (character_type == 3)  awesome_face(ch_x, ch_y, 0.8, 1);
+  
+    float dx_1 = ob1_x - ch_x;
+    float dy_1 = ob1_y - ch_y;
+    float dx_2 = ob2_x - ch_x;
+    float dy_2 = ob2_y - ch_y;
+    float dx_3 = ob3_x - ch_x;
+    float dy_3 = ob3_y - ch_y;
+  
+    float d1 = sqrt(dx_1*dx_1 + dy_1*dy_1);
+    float d2 = sqrt(dx_2*dx_2 + dy_2*dy_2);
+    float d3 = sqrt(dx_3*dx_3 + dy_3*dy_3);
+  
+    if (d1 < 70 | d2 < 70 | d3 < 70){    
+      ch_x = st_x; ch_y = st_y;    
+      colide_count += 1;
+      if (mission_state == 0 && colide_count == 6) mission_state = 1;  
+    }
+    
+    if (ch_x > 930 && ch_y < 70){
+      if (mission_state == 0)  mission_state = 2;
+    }
+  }
+}
+
+
+void Obstacles_Moving(){
+  ob1_x += ob1_vx;  ob1_y += ob1_vy;
+  ob2_x += ob2_vx;  ob2_y += ob2_vy;
+  ob3_x += ob3_vx;  ob3_y += ob3_vy;
+  if(ob1_x < 0 || ob1_x > width) ob1_vx = -ob1_vx;
+  if(ob2_x < 0 || ob2_x > width) ob2_vx = -ob2_vx;
+  if(ob3_x < 0 || ob3_x > width) ob3_vx = -ob3_vx;
+  if(ob1_y < 0 || ob1_y > height) ob1_vy = -ob1_vy;
+  if(ob2_y < 0 || ob2_y > height) ob2_vy = -ob2_vy;
+  if(ob3_y < 0 || ob3_y > height) ob3_vy = -ob3_vy;
+  Obstacles_Coliding();
+  drawzzanggu(ob1_x,ob1_y,ob1_d, ob1_c);
+  drawPig(ob2_x,ob2_y,ob2_d, ob2_c);
+  awesome_face(ob3_x,ob3_y,ob3_d, ob3_c);
+  
+}
+
+void Obstacles_Coliding(){
+  float dx_12 = ob1_x - ob2_x;
+  float dy_12 = ob1_y - ob2_y;
+  float dx_23 = ob2_x - ob3_x;
+  float dy_23 = ob2_y - ob3_y;
+  float dx_31 = ob3_x - ob1_x;
+  float dy_31 = ob3_y - ob1_y;
+  
+  float d12 = sqrt(dx_12*dx_12 + dy_12*dy_12);
+  float d23 = sqrt(dx_23*dx_23 + dy_23*dy_23);
+  float d31 = sqrt(dx_31*dx_31 + dy_31*dy_31);
+  
+  if (d12 < 100){
+    dx_12 = ob1_vx;    dy_12 = ob1_vy;
+    ob1_vx = ob2_vx;   ob1_vy = ob2_vy;
+    ob2_vx = dx_12;    ob2_vy = dy_12;
+    
+    if (ob1_c == 2) ob1_c = 3;
+    else if (ob1_c == 3) ob1_c = 2;    
+    if (ob2_c == 2) ob2_c = 3;
+    else if (ob2_c == 3) ob2_c = 2;  
+  }
+  
+  if (d23 < 100){
+    dx_23 = ob2_vx;    dy_23 = ob2_vy;
+    ob2_vx = ob3_vx;   ob2_vy = ob3_vy;
+    ob3_vx = dx_23;    ob3_vy = dy_23;
+    
+    if (ob2_c == 2) ob2_c = 3;
+    else if (ob2_c == 3) ob2_c = 2;    
+    if (ob3_c == 3) ob3_c = 2;
+    else if (ob3_c == 2) ob3_c = 3;  
+  }
+  
+  if (d31 < 100){
+    dx_31 = ob3_vx;    dy_31 = ob3_vy;
+    ob3_vx = ob1_vx;   ob3_vy = ob1_vy;
+    ob1_vx = dx_31;    ob1_vy = dy_31;
+    
+    if (ob3_c == 3) ob3_c = 2;
+    else if (ob3_c == 2) ob3_c = 3;    
+    if (ob1_c == 3) ob1_c = 2;
+    else if (ob1_c == 2) ob1_c = 3;  
+  }  
+}
+
+void Gameover(){
+  background(bgcolor);
+  textSize(50);
+  fill(255);
+  text("GAME OVER", 373, 240);
+}
+
+void GameSucceed(){
+  background(bgcolor);
+  textSize(50);
+  fill(255);
+  text("GOAL", 440, 240);
+  clear_time =(frame - start_frame) / 60.0;
+  textSize(30);
+  text("Time: "+ clear_time +"seconds", 380, 290);
+}
