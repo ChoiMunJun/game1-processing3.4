@@ -1,0 +1,71 @@
+void drawPig(float head_x, float head_y, float scale, float ob_c) {
+  
+  float d = scale;
+  
+  float body_x = head_x + 50*d;
+  float body_y = head_y + 50*d;
+  
+  float tail_x = body_x + 60*d;
+  float tail_y = body_y - 10*d;
+
+ 
+  stroke(200, 100, 150); 
+  strokeWeight(3); 
+ 
+  noFill();
+  stroke(255, 160, 180);
+  strokeWeight(5);
+  arc(tail_x, tail_y, 40*d, 40*d, PI/2, PI);
+
+  fill(230, 150, 170); 
+  stroke(200, 100, 150);
+  strokeWeight(3);
+  rect(body_x - 45*d, body_y + 14*d, 20*d, 40*d, 10*d); 
+  rect(body_x - 5*d, body_y + 14*d, 20*d, 40*d, 10*d); 
+
+  if (ob_c == 1) fill(255, 182, 193);
+  else if (ob_c == 2) fill(0,255,0);
+  else if (ob_c == 3) fill(255,0,255);
+  ellipse(body_x, body_y, 100*d, 80*d); 
+  
+  circle(head_x, head_y, 100*d); 
+
+  fill(255, 204, 204); 
+  stroke(200, 100, 150);
+  strokeWeight(3);
+  
+  pushMatrix(); 
+  translate(head_x - 35*d, head_y - 30*d); 
+  rotate(radians(40)); 
+  ellipse(0, 0, 30*d, 50*d); 
+  popMatrix(); 
+
+  pushMatrix(); 
+  translate(head_x + 35*d, head_y - 30*d); 
+  rotate(radians(-40)); 
+  ellipse(0, 0, 30*d, 50*d); 
+  popMatrix(); 
+  
+  fill(255, 0, 0); 
+  stroke(200, 0, 0); 
+  ellipse(head_x, head_y + 30*d, 10*d, 15*d); 
+  
+  fill(255, 160, 180);
+  stroke(200, 100, 150);
+  strokeWeight(3);
+  ellipse(head_x, head_y + 15*d, 40*d, 25*d); 
+  fill(0);
+  noStroke();
+  ellipse(head_x - 10*d, head_y + 15*d, 10*d, 15*d); 
+  ellipse(head_x + 10*d, head_y + 15*d, 10*d, 15*d); 
+
+  fill(0);
+  circle(head_x - 18*d, head_y - 15*d, 10*d); 
+  circle(head_x + 18*d, head_y - 15*d, 10*d); 
+
+  fill(255, 182, 193);
+  stroke(200, 100, 150);
+  strokeWeight(3);
+  rect(body_x - 18*d, body_y + 17*d, 20*d, 40*d, 10*d); 
+  rect(body_x + 22*d, body_y + 17*d, 20*d, 40*d, 10*d); 
+}
